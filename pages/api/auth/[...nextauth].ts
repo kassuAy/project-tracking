@@ -1,7 +1,7 @@
 import { compare } from 'bcryptjs'
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { connectToMongoDB } from '../../../lib/mongodb'
+import connectToMongoDB from '../../../lib/mongoconnect' 
 import User from '../../../models/user'
 import { IUser } from '../../../types'
 
@@ -11,14 +11,14 @@ const options: NextAuthOptions = {
             id: "credentials",
             name: "Credentials",
             credentials: {
-                email: { label: "Email", type: "text" },
+                username: { label: "Username", type: "text" },
                 password: { label: "password", type: "password" }
             },
             async authorize(credentials) {
                 await connectToMongoDB().catch(err => { throw new Error(err) })
 
                 const user = await User.findOne({
-                    email: credentials?.email
+                    username: credentials?.username
                 }).select("+password")
 
                 if (!user) {

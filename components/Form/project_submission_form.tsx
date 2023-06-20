@@ -27,9 +27,9 @@ const Project_submissionForm = () => {
   const [submitError, setSubmitError] = useState<string>('');
   const [loading, setloading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  // const [uploadProgress, setUploadProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState(null);
+  // const [uploadError, setUploadError] = useState(null);
   const [cancelTokenSource, setCancelTokenSource] = useState(null);
   const [file, setFile] = useState(null);
   const router = useRouter();
@@ -57,11 +57,11 @@ const Project_submissionForm = () => {
     else {
       
         if (!file) {
-          err.push({ projectFileName: 'Please choose a file' });
+          err.push({ projectFileName: 'Please a file' });
           setSelectedFile(null);
         }
          else {
-          err.push(null);
+          err.push();
           setSelectedFile(file);
         }
       
@@ -84,7 +84,7 @@ const Project_submissionForm = () => {
       try {
         setloading(true);
         const apiRes = await axios.post(
-          'http:localhost:3000/api/auth/uploadFinalProject',
+          'http:localhost:3000/api/finalProject/project_upload',
           formData
         );
         if (apiRes?.data?.success) {
@@ -114,57 +114,22 @@ const Project_submissionForm = () => {
     setData({ ...formData, [event.target.name]: event.target.value });
   };
 
-
-
-  const handleUpload = async () => {
-    if (!file) {
-      return;
-    }
-
-    setUploading(true);
-    setUploadProgress(0);
-    setUploadError(null);
-    try {
-        const response = await axios.post('/api/upload', formData, {
-          cancelToken: source.token,
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(percentCompleted);
-          },
-        });
-  
-        console.log('Upload successful!', response.data);
-      } catch (error) {
-        if (axios.isCancel(error)) {
-          console.log('Upload canceled by user.');
-        } else {
-          setUploadError(error);
-          console.error('Error uploading file:', error);
-        }
-      } finally {
-        setUploading(false);
-        setCancelTokenSource(null);
-      }
-    };
-  
     const handleCancel = () => {
       if (cancelTokenSource) {
         cancelTokenSource.cancel('Upload canceled by user.');
       }
-    };
-
+    }; 
 
 
 
   return (
     <div
-      className="relative p-12 mt-[-50px] mb-[-50px] px-[30%]"
+      className=" relative p-36 mt-[-50px] mb-[-50px] px-[30%] items-center justify-center space-y-4"
       style={{ height: '49.5rem'}}
     >
-      <main className=" bg-[#C0C0C0] absolute p-12 text-center justify-center">
-        <form className="relative  w-full h-full " onSubmit={handleUploading}>
+      
+      <main className="  absolute p-12 text-center justify-center">
+        <form className="relative  w-full h-full p-8 bg-gray-500 rounded-lg shadow-lg " onSubmit={handleUploading}>
           <h1 className="h3 mb-3 fw-normal">Upload final Project</h1>
           <div className="flex flex-col justify-center items-centr">
             
@@ -217,10 +182,13 @@ const Project_submissionForm = () => {
                 type="file"
                 name="projectFileName"
                 value={formData.projectFileName}
-                onChange={handleFileChange}
+                onChange={handleInputChange}
+                // onClick={handleFileChange}
                 required
               />
               </span>
+
+            
             </div>
           </div>
           <button
@@ -238,9 +206,60 @@ const Project_submissionForm = () => {
       </button>
           {submitError && <ErrorText>{submitError}</ErrorText>}
         </form>
+
+ 
+
+ 
       </main>
     </div>
   );
 };
 
 export default Project_submissionForm;
+
+
+
+// export default function ContactForm() {
+//   const [project_title, setProjecttitle] = useState('');
+//   const [description, setDescription] = useState('');
+//   const [accademicYear, setYear] = useState('');
+//   const [projectFileName, setProjectFile] = useState(null);
+  
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     const formData = new FormData();
+//     formData.append('project_title', project_title);
+//     formData.append('description', description);
+//     formData.append('accademicYear', accademicYear);
+//     formData.append('projectFileName', projectFileName);
+
+//     try {
+//       const response = await axios.post("http://localhost:3000/api/finalProject/project_upload", formData, {
+//         headers: {
+//           'Content-Type': 'multipart/form-data',
+//         },
+//       });
+      
+//       console.log(response.data);
+
+//       // Reset form fields and file input
+//       setProjecttitle('');
+//       setDescription('');
+//       setYear('');
+//       setProjectFile(null);
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   };
+
+//   return (
+//     <form onSubmit={handleSubmit}>
+//       <input type="text" value={project_title} onChange={(e) => setProjecttitle(e.target.value)} />
+//       <textarea  value={description} onChange={(e) => setDescription(e.target.value)} />
+//       <input type='date' value={accademicYear} onChange={(e) => setYear(e.target.value)} />
+//       <input type="file" onChange={(e) => setProjectFile(e.target.files[0])} />
+//       <button type="submit">Submit</button>
+//     </form>
+//   );
+// }

@@ -1,8 +1,13 @@
-import { Schema, model, models } from "mongoose"
-import BSON from "bson"
-import { Binary } from "mongodb"
+import { Schema, model, models, Document, Model } from "mongoose"
+export interface UserDocument extends Document {
+    email: string;
+    fullName: string;
+    username: String;
+    password: String;
+    role: string;
+}
 
-const UserSchema = new Schema({
+const UserSchema = new Schema<UserDocument>({
     email: {
         type: String,
         unique: true,
@@ -15,13 +20,30 @@ const UserSchema = new Schema({
         minLength: [4, "Full name should be atleast 4 characters long"],
         maxLength: [30, "Full name should be less than 30 characters"]
     },
+    username: {
+        type: String,
+        required: [true, "username is required"]
+    },
     password: {
         type: String,
         required: [true, "password is required"],
         select: false
+    },
+    role: {
+        type: String,
+        required: [true, "role is required"]
     }
 })
-const User = models.User || model("User", UserSchema)
 
-export default User
+let User: Model<UserDocument>;
+
+try {
+  // Try to retrieve the existing User model
+  User = model<UserDocument>('User');
+} catch (error) {
+  // If the User model doesn't exist, create it
+  User = model<UserDocument>('User', UserSchema);
+}
+
+export default User;
 

@@ -1,27 +1,55 @@
-import BSON from 'bson';
-import { Binary } from 'mongodb';
-import { Schema, model, models } from 'mongoose';
+import mongoose from "mongoose";
 
-const ProjectSchema = new Schema({
-  project_title: {
-    type: String,
-    unique: true,
-    required: [true, 'title is required'],
-  },
-  description: {
-    type: String,
-    required: [true, 'fill the description of the project'],
-  },
-  accademicYear: {
-    type: Date,
-    required: [true, "this field can't be empty"],
-  },
-  fileName: {
-    type: Binary,
-    chunkSizeBytes: 1048576, //10 mb
+const ProjectSchema = new mongoose.Schema({
+  project_title: String,
+  description: String,
+  academic_year: String,
+  demo_image: String,
+  file: {
+    data: Buffer,
+    contentType: String,
   },
 });
 
-const Project = models.Project || model('Project', ProjectSchema);
+export default mongoose.models.Project || mongoose.model('Project', ProjectSchema);
 
-export default Project;
+// import { Schema, models, model, Model, Document} from "mongoose";
+
+// export interface ProjectDocument extends Document {
+//   projectTitle: string;
+//   description: string;
+//   academicYear: number;
+//   image: string;
+//   pdf: string;
+// }
+
+// const projectSchema = new Schema<ProjectDocument>(
+//   {
+//     projectTitle: {
+//       type: String,
+//       required: true
+//     },
+//     description: {
+//       type: String,
+//       required: true
+//     },
+//     academicYear: {
+//       type: Number,
+//       required: true
+//     },
+//     image: {
+//       type: String,
+//       required: true
+//     },
+//     pdf: {
+//       type: String,
+//       required: true
+//     }
+//   },
+//   {
+//     timestamps: true
+//   }
+// );
+
+// const Project: Model<ProjectDocument> = models.Project || model<ProjectDocument>('Project', projectSchema);
+// export default Project

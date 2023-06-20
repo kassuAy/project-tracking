@@ -3,7 +3,7 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { FaDatabase, FaUser } from 'react-icons/fa'
+import { FaAdjust, FaDatabase, FaUser } from 'react-icons/fa'
 import {CgLogOut} from 'react-icons/cg'
 import {BiGroup} from 'react-icons/bi'
 import {RxDashboard} from 'react-icons/rx'
@@ -16,6 +16,7 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
     const Menus = [
         { title: 'Students', src: <FaUser size={15} />, linkto: '/coordinator/students' },
         { title: 'Examiners', src: <FaUser size={15} />, linkto: '/coordinator/examiners' },
+        { title: 'Appvove Title', src:<FaAdjust size={15} />,linkto:'/coordinator/approve_title'},
         { title: 'Advisors', src: <FaUser size={15} />, linkto: '/coordinator/advisors' },
         { title: 'Projects', src: <FaDatabase size={15} />, linkto: '/coordinator/projects' },
         { title: 'Groups', src: <BiGroup size={15} />, linkto: '/coordinator/groups' },

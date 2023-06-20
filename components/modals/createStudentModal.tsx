@@ -1,34 +1,21 @@
 'use client'
-// import { Form, Field, ErrorMessage, Formik } from "formik"
-// import *as Yup from 'yup'
-// import {useForm} from 'react-hook-form'
-import { GetServerSideProps } from "next"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-
-// interface CreateStudentModalProps {
-//     showModal: boolean
-//     setShowModal: (showModal: boolean) => void
-//     role: string
-    
-//   }
-
+import axios, {AxiosError} from "axios"
+// import { InputErrors } from '../../types/error'
+import { FormData } from "../../types"
 interface Students{
   showModal: boolean
   setShowModal: (showModal: boolean) => void
-//   students: {
-//     firstName: string
-//     lastName: string
-//     email: string
-//     studentId: string
-//   }[]
 }
 
-interface FormData {
-  firstName: string
-  lastName: string
-  email: string
-  studentId: string
+const initialFormValues: FormData = {
+  fullName: '', 
+  email: '', 
+  username: '', 
+  password: '', 
+  role: 'student',
+  confirmPassword: ''
 }
 
 export const CreateStudentModal = ({
@@ -37,38 +24,74 @@ export const CreateStudentModal = ({
 //   students
 } : Students) => {
    
-    const [form, setForm] = useState<FormData>({firstName: '', lastName: '', email: '', studentId: ''})
+    const [form, setForm] = useState<FormData>(initialFormValues)
+    const [submitError, setSubmitError] = useState<string>('');
     const router = useRouter()
 
-    // const refreshData = () => {
-    //   router.replace(router.asPath)
-    // }
 
-    async function create(data: FormData) {
-      try {
-        fetch('http://localhost:3000/api/admin/students', {
-          body: JSON.stringify(data),
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          method: 'POST'
-        }).then(() => {
-            setForm({firstName: '', lastName: '', email: '', studentId: ''})
+    // const [validationErrors, setValidationErrors] = useState<InputErrors[]>([])
+    const [loading, setLoading] = useState(false)
+    // console.log(role)
+    const validateData = (): boolean => {
+        const err = []
+        
+        if (form.fullName?.length < 4) {
+            err.push({ fullName: "Full name must be atleast 4 characters long" })
         }
-          )
-      } catch (error) {
-        console.log(error);
-      }
+        else if (form.fullName?.length > 30) {
+            err.push({ fullName: "Full name should be less than 30 characters" })
+        }
+        else if (form.password?.length < 8) {
+            err.push({ password: "Password should be atleast 8 characters long" })
+        }
+        else if (form.password !== form.confirmPassword) {
+            err.push({ confirmPassword: "user id don't match" })
+        }
+
+        // setValidationErrors(err)
+
+        if (err.length > 0) {
+            return false
+        }
+        else {
+            return true
+        }
     }
 
-    const handleSubmit = async (data: FormData) => {
-      try {
-       create(data) 
-      } catch (error) {
-        console.log(error);
-      }
+    const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+
+        const isValid = validateData()
+
+        if (isValid) {
+            // sign up
+            try {
+                setLoading(true)
+                const response = await fetch('/api/auth/signup', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(form),
+                });
+
+                if(response.ok){
+                    console.log("Form Submitted Successfully")
+                    setSubmitError('')
+                    setForm(initialFormValues)
+                }
+                else{
+                    const data = await response.json();
+                    setSubmitError(data.error);
+                    // console.log(data.error);
+                }
+            } catch (error) {
+                console.error('An error occurred while submitting the form:', error);
+                setSubmitError('An error ocurred while submitting the form');
+            }
+
+            setLoading(false)
+        }
     }
-  
+ 
     return (
         <>
       <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
@@ -80,10 +103,7 @@ export const CreateStudentModal = ({
               <form
                 className="text-secondary-text"
                 encType="multipart/form-data"
-                onSubmit={e => {
-                  e.preventDefault()
-                  handleSubmit(form)
-                }}
+                onSubmit={handleSignup}
                 >
                 <div className="mb-4">
                     <h1 className="text-xl text-center mb-1 text-primary-text">
@@ -91,39 +111,19 @@ export const CreateStudentModal = ({
                     </h1>
                   
                 </div>
-                <div className="flex gap-10">
-                    
                     <div className="mb-4">
                         <label htmlFor="firstName" className="text-sm text-gray-700 font-semibold">
-                        Firstname
+                        Full Name
                         </label>
                         <input
-                        name="firstName"
+                        name="fullName"
                         className="text-sm  block border-secondary-text-100  rounded border-2 border-solid w-full p-1"
-                        value={form.firstName}
-                        onChange={e => setForm({...form, firstName: e.target.value})}
+                        value={form.fullName}
+                        onChange={e => setForm({...form, fullName: e.target.value})}
                         required
                         />
-                        {/* <div className="text-red-400 text-sm py-1">
-                        
-                        </div> */}
                     </div>
-                    <div className="mb-4">
-                        <label htmlFor="lastName" className="text-sm text-gray-700 font-semibold">
-                        Lastname
-                        </label>
-                        <input
-                        name="lastName"
-                        className="text-sm  block border-secondary-text-100  rounded border-2 border-solid w-full p-1"
-                        value={form.lastName}
-                        onChange={e => setForm({...form, lastName: e.target.value})}
-                        required
-                        />
-                        {/* <div className="text-red-400 text-sm py-1">
-                        
-                        </div> */}
-                    </div>
-                    </div>
+                    
                     <div>
                     <div className="mb-4">
                         <label htmlFor="email" className="text-sm text-gray-700 font-semibold">
@@ -142,23 +142,56 @@ export const CreateStudentModal = ({
                     </div>
                     
                     <div className="mb-4">
-                        <label htmlFor="studentId" className="text-sm text-gray-700 font-semibold">
+                        <label htmlFor="username" className="text-sm text-gray-700 font-semibold">
                         Student ID
                         </label>
                         <input
-                        name="studentId"
+                        name="username"
                         className="text-s block border-secondary-text-100  rounded border-2 border-solid w-full p-1"
-                        value={form.studentId}
-                        onChange={e => setForm({...form, studentId: e.target.value})}
+                        value={form.username}
+                        onChange={e => setForm({...form, username: e.target.value})}
                         required
                         />
                         <div className="text-red-400 text-sm py-1">
                         
                         </div>
                     </div>
+                    <div className="flex gap-10">
+                      <div className="mb-4">
+                          <label htmlFor="password" className="text-sm text-gray-700 font-semibold">
+                          Password
+                          </label>
+                          <input
+                          name="password"
+                          className="text-s block border-secondary-text-100  rounded border-2 border-solid w-full p-1"
+                          value={form.password}
+                          onChange={e => setForm({...form, password: e.target.value})}
+                          required
+                          />
+                          <div className="text-red-400 text-sm py-1">
+                          
+                          </div>
+                      </div>
+                      <div className="mb-4">
+                          <label htmlFor="confirmPassword" className="text-sm text-gray-700 font-semibold">
+                          Confirm Password
+                          </label>
+                          <input
+                          name="confirmPassword"
+                          className="text-s block border-secondary-text-100  rounded border-2 border-solid w-full p-1"
+                          value={form.confirmPassword}
+                          onChange={e => setForm({...form, confirmPassword: e.target.value})}
+                          required
+                          />
+                          <div className="text-red-400 text-sm py-1">
+                          
+                          </div>
+                      </div>
+                    </div>
                     </div>
                     
                     <div className="flex items-center justify-end gap-4 ">
+                        {submitError && <p>{submitError}</p>}
                         <button
                         className="bg-blue-500 rounded text-white text-sm px-4 py-2 border-2 border-primary shadow hover:shadow-lg outline-none focus:outline-none"
                         type="submit"

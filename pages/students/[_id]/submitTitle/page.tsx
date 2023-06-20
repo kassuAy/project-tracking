@@ -1,5 +1,5 @@
 import React from 'react'
-import SubmitTitle from '../../../components/Form/submitTitle'
+import SubmitTitle from '../../../../components/Form/submitTitle'
 type Props = {}
 
 function page({}: Props) {

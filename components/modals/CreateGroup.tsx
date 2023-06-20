@@ -51,6 +51,19 @@ function CreateGroupModal({
                         <ErrorMessage name="name" />
                       </div>
                     </div>
+                    <div>
+                      <label htmlFor="name" className="text-sm text-gray-700">
+                        Group Members
+                      </label>
+
+                      <Field name="studentName"
+                      className="text-sm block border-secondary-text-100 rounded border-2 border-solid w-full p-1"
+                      />
+
+                      <div className="text-red-400 text-sm py-1">
+                        <ErrorMessage name="name" />
+                      </div>
+                    </div>
                     <div className="flex items-center justify-end gap-4 ">
                       <button
                         className="bg-blue-700 rounded text-white text-sm px-4 py-2 border-2 border-gray shadow hover:shadow-lg outline-none focus:outline-none"

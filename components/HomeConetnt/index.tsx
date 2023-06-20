@@ -1,12 +1,12 @@
 import React from 'react';
 import Head from 'next/head';
-// import { Container } from './HomeElements'
+
 import { Footer } from '../navigation/footer/Footer';
-// import NavBar from '../navigation/header/NavBar'
 
-// import Navbar from '../Navbar/index'
 import Items from '../items/items';
-
+import Image from 'next/image';
+// import CommentModal from './CommentSection';
+import { useState } from 'react';
 type Props = {};
 
 const HomeContent = (props: Props) => {
@@ -22,26 +22,97 @@ const HomeContent = (props: Props) => {
       <main className="bg-white">
         {/* <NavBar></NavBar> */}
 
+        <header className="py-6 mt-3 shadow-lg mr-48 ml-48">
+          <div className="container mx-auto flex flex-col items-center justify-center">
+            <h1 className="text-5xl font-bold text-blue mb-2">
+              Discover Projects
+            </h1>
+            <p className="font-bold text-xl text-gray-400">
+              Find and explore exciting projects uploaded by our Students
+            </p>
+          </div>
+        </header>
+        <div className="grid grid-cols-2 gap-16 mx-auto pl-24 pt-12">
+          <div>
+            <h1 className="font-bold text-6xl text-blue-500 mb-2 ml-5 mt-5">
+              Welcome to{' '}
+              <span className="font-bold text-xl text-blue-400"></span>SIS
+              Student Project Tracking System
+            </h1>
+            <p className="text-xl font-bold  mb-2 ml-5 pt-3">
+              Browse our collection of projects to discover new tools, apps, and
+              designs
+            </p>
+            <div className="w-40 text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 ml-5 mt-6 rounded">
+              <a
+                href=""
+                className="text-white font-bold pl-2 px-4 rounded w-50"
+              >
+                Get Started
+              </a>
+            </div>
+          </div>
+          <div>
+            <Image
+              src="/home.jpg"
+              alt="My Image"
+              width={400}
+              height={250}
+              className="pl-16"
+            />
+          </div>
+        </div>
+
+        {/* About Us */}
+        <div className="text-center font-bold text-gray-500 text-4xl mt-">
+          About Us
+        </div>
+        <div className="grid grid-cols-2 shadow-lg mt-12 pl-24 pb-12">
+          <div>
+            <Image
+              src="/aboutus.jpg"
+              alt="My Image"
+              width={430}
+              height={150}
+              className="rounded"
+            />
+          </div>
+          <div>
+            <p className="font-serif text-black pr-32">
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry standard dummy text
+              ever since the 1500s, when an unknown printer took a galley of
+              type and scrambled it to make a type specimen book. <br />
+              It has survived not only five centuries, but also the leap into
+              electronic typesetting, remaining essentially unchanged.
+            </p>
+            <div className="w-40 text-center bg-blue-500 hover:bg-gray-700 text-white font-bold py-3 px-4 mt-3 rounded">
+              <a
+                href=""
+                className="text-white font-bold pl-2 px-4 rounded w-50"
+              >
+                View More
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* // latest projects */}
+
         <div className="flex flex-col">
           <div className="mt-[100px]">
             <div>
-              <h1 className="text-center text-4xl font-bold italic text-blue-700">
-                Welcome to SIS{' '}
-              </h1>
-            </div>
-            <div>
-              <h1 className="text-center text-4xl font-bold italic text-blue-700 mb-5">
-                Student Project Tracking System
-              </h1>
-            </div>
-            <div>
-              <h1 className="font-bold text-4xl text-gray-400 mt-10 ml-14 mb-5 p-2">
+              <h1
+                id="project"
+                className="font-bold text-4xl text-gray-400 text-center pb-12"
+              >
                 Latest Projects
               </h1>
             </div>
             <Items />
           </div>
         </div>
+
 
         <div className="grid max-w-screen-xl gap-8 p-4 mx-auto text-gray-900 grid-cols-3 dark:text-blue-500 sm:p-8">
           <div className="flex flex-col items-center justify-center">
@@ -65,8 +136,9 @@ const HomeContent = (props: Props) => {
         </div>
         <Footer></Footer>
       </main>
+
+      {/* student */}
     </div>
-    // </Container>
   );
 };
 

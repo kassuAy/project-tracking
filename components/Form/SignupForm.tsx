@@ -18,15 +18,20 @@ import { getErrorMsg, loginUser } from '../../helpers'
 import { useRouter } from 'next/router'
 import axios, { AxiosError } from 'axios'
 import { ErrorText } from './InputFeildElements'
+import { FormData } from '../../types'
+
+const initialFormValues: FormData = {
+    fullName: '', 
+    email: '', 
+    username: '', 
+    password: '', 
+    role: 'guest',
+    confirmPassword: ''
+}
 
 const SignupForm = () => {
 
-    const [data, setData] = useState({
-        fullName: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-    })
+    const [data, setData] = useState<FormData>(initialFormValues)
 
     const [validationErrors, setValidationErrors] = useState<InputErrors[]>([])
     const [submitError, setSubmitError] = useState<string>("")
@@ -35,15 +40,14 @@ const SignupForm = () => {
 
     const validateData = (): boolean => {
         const err = []
-
         if (data.fullName?.length < 4) {
             err.push({ fullName: "Full name must be atleast 4 characters long" })
         }
         else if (data.fullName?.length > 30) {
             err.push({ fullName: "Full name should be less than 30 characters" })
         }
-        else if (data.password?.length < 6) {
-            err.push({ password: "Password should be atleast 6 characters long" })
+        else if (data.password?.length < 8) {
+            err.push({ password: "Password should be atleast 8 characters long" })
         }
         else if (data.password !== data.confirmPassword) {
             err.push({ confirmPassword: "user id don't match" })
@@ -75,7 +79,7 @@ const SignupForm = () => {
                     // save data in session using next auth
 
                     const loginRes = await loginUser({
-                        email: data.email,
+                        username: data.username,
                         password: data.password
                     })
 
@@ -86,6 +90,8 @@ const SignupForm = () => {
                         router.push("/")
                     }
                 }
+                setData(initialFormValues);
+                setSubmitError('')
             } catch (error: unknown) {
                 if (error instanceof AxiosError) {
                     const errorMsg = error.response?.data?.error
@@ -106,7 +112,7 @@ const SignupForm = () => {
 
     return (
         <Container>
-            <AppLogoTitle />
+            {/* <AppLogoTitle /> */}
 
             <Form onSubmit={handleSignup}>
                 <FormTitle> Sign Up </FormTitle>
@@ -131,17 +137,26 @@ const SignupForm = () => {
                     required
                 />
                 <InputFeild
+                    type="text"
+                    placeholder={'Username'}
+                    value={data.username}
+                    name="username"
+                    onChange={handleInputChange}
+                    icon={<BsPerson />}
+                    required
+                />
+                <InputFeild
                     type="password"
                     placeholder={'password'}
                     value={data.password}
-                    name="userId"
+                    name="password"
                     onChange={handleInputChange}
                     icon={<AiOutlineUnlock />}
                     required
                     error={getErrorMsg("password", validationErrors)}
                 />
                 <InputFeild
-                    type="text"
+                    type="password"
                     placeholder={'ConfirmPassword'}
                     value={data.confirmPassword}
                     name="confirmPassword"
@@ -169,7 +184,7 @@ const SignupForm = () => {
                         Already have account?
                     </InfoText>
 
-                    <Link href={"/login"}>
+                    <Link className='text-blue-700' href={"/login"}>
                         Login
                     </Link>
                 </InfoTextContainer>

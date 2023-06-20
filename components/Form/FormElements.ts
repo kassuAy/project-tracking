@@ -37,8 +37,9 @@ export const Form = styled.form`
 `
 
 export const FormTitle = styled.h2`
-    font-size: 1rem;
-    color: rgba(0, 0, 0, 0.5);
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: blue;
     text-align: center;
     padding: 1rem;
 `

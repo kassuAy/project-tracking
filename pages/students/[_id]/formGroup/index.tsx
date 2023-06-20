@@ -1,8 +1,9 @@
 'use client'
-import GroupContainer from '../../../components/cards/group/GroupContainer'
+import GroupContainer from '../../../../components/cards/group/GroupContainer'
 import React from 'react'
 import {useState} from 'react'
-import CreateGroupModal from '../../../components/modals/CreateGroup'
+import CreateGroupModal from '../../../../components/modals/CreateGroup'
+import GroupForm from '../../../../components/Form/groupForm'
 function FormGroup() {
   const [showModal, setShowModal] = useState(false)
   return (
@@ -15,12 +16,14 @@ function FormGroup() {
         >
           + Add Group
         </button>
+        
       </div> 
-
+      
       {showModal ? (
         <CreateGroupModal setShowModal={setShowModal} showModal={showModal} />
       ): null}
       <GroupContainer />
+      
     </div>
     )
 }

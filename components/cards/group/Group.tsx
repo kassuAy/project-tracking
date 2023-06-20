@@ -6,7 +6,7 @@ import {MdEdit} from 'react-icons/md'
 import { IGroup } from '../../../types'
 import UpdateGroupModal from '../../../components/modals/UpdateGroup'
 
-function GroupCard({__v, name, _id}: IGroup) {
+function GroupCard({group_name, students, _id}: IGroup) {
     const[showModal, setShowModal] = useState(false);
     const onDeleteHandler = async (id: string) => {
         if (window.confirm(`Are you sure?`)) {
@@ -18,14 +18,14 @@ function GroupCard({__v, name, _id}: IGroup) {
   return (
     <div className="flex flex-col space-y-6 shadow-xl w-64 h-64">
       <Link
-        href={`/student/formGroup/${name}`}
+        href={`/student/formGroup/${students[0].student_id}`}
       >
         <div className="flex flex-col items-center py-6">
           <div className="relative ">
             {/* <img src="/Ellipse60.png" alt="" /> */}
-            <p className="absolute top-10 left-8 text-white">IS</p>
+            <p className="absolute top-10 left-8 text-gray-700">IS</p>
           </div>
-          <h2 className="font-semibold text-xl text-gray-700">{name}</h2>
+          <h2 className="font-semibold text-xl text-gray-700">{group_name}</h2>
           
         </div>
       </Link>
@@ -54,7 +54,7 @@ function GroupCard({__v, name, _id}: IGroup) {
       {showModal ? (
         <UpdateGroupModal
           _id={_id}
-          name={name}
+          name={group_name}
           setShowModal={setShowModal}
           showModal={showModal}
         />

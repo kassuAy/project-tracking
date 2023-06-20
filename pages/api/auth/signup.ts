@@ -1,58 +1,43 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { hash } from "bcryptjs"
-import { connectToMongoDB } from "../../../lib/mongodb"
-import User from "../../../models/user"
-import { IUser } from "../../../types"
+// import { connectToMongoDB } from "../../../lib/mongodb"
+import connectToMongoDB from "../../../lib/mongoconnect"
+import User, {UserDocument} from "../../../models/user"
+import { FormData } from "../../../types"
 import mongoose from "mongoose"
 
-type unionType = String | Number;
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     connectToMongoDB().catch(err => res.json(err))
 
     if (req.method === "POST") {
         if (!req.body) return res.status(400).json({ error: "Data is missing" })
 
-        const { fullName, email, password } = req.body
+        const { fullName, email, username, password, role }: FormData = req.body
 
-        const userExists = await User.findOne({ email })
+        const userExists = await User.findOne({email})
 
         if (userExists) {
             return res.status(409).json({ error: "User Already exists" })
         }
-        else {
-            if (password.length < 6)
-                
-             return res.status(409).json({ error: "passwords length should be 6 character" })
+        
+        if (password.length < 8)               
+            return res.status(409).json({ error: "passwords length should be 8 character" })
 
-            const hashPassword = await hash(password, 12)
+        const hashPassword = await hash(password, 12)
 
-            User.create({
+        try{
+            const newUser: UserDocument = await User.create({
                 fullName,
                 email,
-                password: hashPassword
-            }, (error: unknown, data: IUser) => {
-                if (error && error instanceof mongoose.Error.ValidationError) {
-                    //mongo db will return array
-                    // but we only want to show one error at a time
-
-                    for (let field in error.errors) {
-                        const msg = error.errors[field].message
-                        return res.status(409).json({ error: msg })
-                    }
-                }
-
-                const user = {
-                    email: data.email,
-                    fullName: data.fullName,
-                    _id: data._id
-                }
-
-                return res.status(201).json({
-                    success: true,
-                    user
-                })
+                username,
+                password: hashPassword,
+                role,
             })
-        }
+
+            return res.status(201).json({user: newUser})
+        } catch(error){
+            return res.status(500).json({ error: "Failed to create user" });
+        }           
     }
     else {
         res.status(405).json({ error: "Method Not Allowed" })

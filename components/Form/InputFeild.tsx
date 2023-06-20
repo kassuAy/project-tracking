@@ -37,6 +37,7 @@ const InputFeild = ({ placeholder, icon, type, required, value, onChange, name, 
                 {icon}
 
                 <Input
+                    className='text-black'
                     placeholder={placeholder}
                     type={inputType}
                     required={required}
